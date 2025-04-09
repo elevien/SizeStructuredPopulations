@@ -1,0 +1,35 @@
+function lineage_to_dataframe(root::Cell)
+    rows = []
+
+    cell = root
+    while cell !== nothing
+        n = length(cell.time)
+        d = length(cell.x[1])  # dimension of phenotype vector
+        for i in 1:n
+            row = (
+                time = cell.time[i],
+                z1 = cell.z[i][1],
+                z2 = cell.z[i][2],
+                x = cell.x[i],
+            )
+            push!(rows, row)
+        end
+        cell = cell.daughterL
+    end
+
+    # Convert to DataFrame and expand `x` vector into separate columns
+    df = DataFrame(rows)
+    d = length(df.x[1])
+    for j in 1:d
+        df[!, "x$j"] = getindex.(df.x, j)
+    end
+    select!(df, Not(:x))  # remove the original `x` column
+    return df
+end
+
+function lineage_to_matrix(root::Cell)
+    df = lineage_to_dataframe(root)
+    return Matrix(df)
+end
+
+

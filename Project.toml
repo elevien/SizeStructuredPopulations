@@ -1,0 +1,22 @@
+name = "SizeStructuredPopulations"
+uuid = "8eef7faa-ee70-4afe-898d-4aaf72689122"
+authors = ["ethan-air <ethanlevien@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+PkgTemplates = "14b8a8f1-9102-5b29-a752-f990bacb7fe1"
+PythonPlot = "274fc56d-3b97-40fa-a1cd-1b4a50311bf9"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
+
+[compat]
+CSV = "0.10.15"
+DataFrames = "1.7.0"
+Distributions = "0.25.118"
+LinearAlgebra = "1.11.0"
+PkgTemplates = "0.7.53"
+PythonPlot = "1.0.6"
+Revise = "3.7.3"
