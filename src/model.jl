@@ -34,7 +34,7 @@ function generate_cell(model::GrowthModel, init::Vector{Float64},Tmax::Float64; 
 
 
     div = false
-    while !div && t < Tmax
+    while (!div) && (t < Tmax)
         t += dt
         λ = model.lambda(x[end])
         z_new = z[end] .+  λ .* dt

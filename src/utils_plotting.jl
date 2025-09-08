@@ -1,39 +1,33 @@
+function make_branches(root::Cell,dt,max_depth)
+    branches = Vector{Tuple{Float64, Float64, Float64, Float64}}()
 
-function recursive_draw_tree(ax,node,x0,y0,depth,h,lw)
-    val = 0. #max(0.2,min(abs(node.label/(τ*D)),1))
-    clr = (val,val,val)
-    dt = (node.label[end,1] -node.label[1,1])*h
-    ax.plot([x0,x0],[y0,y0-dt],"-",c=clr,lw=lw)
-    
-    if node.left != nothing
+    function traverse(cell::Cell, x0::Float64, y0::Float64, depth::Int)
+        # Compute vertical branch (lifespan)
+        dt_life = (cell.time[end] - cell.time[1])
+        y1 = y0 - dt_life
+        push!(branches, (x0, y0, x0, y1))
+        
+        dx = 2.0^(-depth)
 
-        val =  0#max(0.2,min(abs(node.right.label/(τ*D)),1))
-        clr = (val,val,val)
-        ax.plot([x0,x0+2.0^(-depth)],[y0-dt,y0-dt],"-",c=clr,lw=lw)
-        recursive_draw_tree(ax,node.left,x0-2.0^(-depth),y0-dt,depth+1,h,lw)
-
-        val =  0#max(0.2,min(abs(node.left.label/(τ*D)),1))
-        clr = (val,val,val)
-        ax.plot([x0-2.0^(-depth),x0],[y0-dt,y0-dt],"-",c=clr,lw=lw)
-        recursive_draw_tree(ax,node.right,x0+2.0^(-depth),y0-dt,depth+1,h,lw)
+        # Horizontal links to daughters
+        y_daughter = y1  # All daughters start at y1
+        if depth <= max_depth
+            # Check for daughters
+            if cell.daughterL !== nothing 
+                # DaughterL
+                xL = x0 - dx
+                push!(branches, (x0, y1, xL, y_daughter))
+                traverse(cell.daughterL, xL, y_daughter, depth + 1)
+            end
+            if cell.daughterR !== nothing
+                # DaughterR
+                xR = x0 + dx
+                push!(branches, (x0, y1, xR, y_daughter))
+                traverse(cell.daughterR, xR, y_daughter, depth + 1)
+            end
+        end
     end
-end
 
-
-function recursive_draw_lineage(ax,node,x0,y0,depth,h,lw,clr)
-
-    dt = (node.label[end,1] -node.label[1,1])*h
-    ax.plot([x0,x0],[y0,y0-dt],"-",c=clr,lw=lw)
-    
-    if node.left != nothing
-        r = rand()
-        if r <0.5
-            ax.plot([x0,x0+2.0^(-depth)],[y0-dt,y0-dt],"-",c=clr,lw=lw)
-            return recursive_draw_lineage(ax,node.right,x0+2.0^(-depth),y0-dt,depth+1,h,lw,clr)
-        else
-            ax.plot([x0-2.0^(-depth),x0],[y0-dt,y0-dt],"-",c=clr,lw=lw)
-            return recursive_draw_lineage(ax,node.left,x0-2.0^(-depth),y0-dt,depth+1,h,lw,clr)
-        end        
-    end
-    return x0,y0-dt,depth
+    traverse(root, 0.0, 0.0, 2)
+    return branches
 end

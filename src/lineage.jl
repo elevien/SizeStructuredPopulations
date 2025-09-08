@@ -9,7 +9,7 @@ function simulate_lineage(model::GrowthModel, Tmax::Float64, init::Vector{Float6
         # Get final state from current cell
         z_parent = current.z[end]
         x_parent = current.x[end]
-        t = current.time[end]
+        t = current.time[end] + dt
 
         # Get daughter state from division kernel
         z_new, x_new = model.h(z_parent, x_parent)
