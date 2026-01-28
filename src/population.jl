@@ -1,5 +1,5 @@
 
-function grow_tree!(node,model::GrowthModel,terminate;dt=0.01)
+function grow_tree!(node,model::GrowthModel,terminate;dt=0.01,parallel_depth=0,depth=0)
     if !terminate(node)
         z_parent = node.z[end]
         x_parent = node.x[end]
@@ -10,8 +10,15 @@ function grow_tree!(node,model::GrowthModel,terminate;dt=0.01)
         init = vcat(t, z_new, x_new)
         node.daughterL = generate_cell(model, init, Inf,dt=dt)
         node.daughterR = generate_cell(model, init, Inf,dt=dt)
-        grow_tree!(node.daughterL,model,terminate,dt=dt)
-        grow_tree!(node.daughterR,model,terminate,dt=dt)
+        if depth < parallel_depth
+            Threads.@sync begin
+                Threads.@spawn grow_tree!(node.daughterL,model,terminate,dt=dt,parallel_depth=parallel_depth,depth=depth + 1)
+                Threads.@spawn grow_tree!(node.daughterR,model,terminate,dt=dt,parallel_depth=parallel_depth,depth=depth + 1)
+            end
+        else
+            grow_tree!(node.daughterL,model,terminate,dt=dt,parallel_depth=parallel_depth,depth=depth + 1)
+            grow_tree!(node.daughterR,model,terminate,dt=dt,parallel_depth=parallel_depth,depth=depth + 1)
+        end
     end
 end
 
