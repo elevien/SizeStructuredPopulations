@@ -39,6 +39,7 @@ function generate_cell(model::GrowthModel, init::Vector{Float64},Tmax::Float64; 
         λ = model.lambda(x[end])
         z_new = z[end] .+  λ .* dt
         x_new = x[end] .+  model.L(x[end], t, dt)
+        #x_new = [max(0.01,xi) for xi in xnew]
 
         push!(times, t)
         push!(z, z_new)

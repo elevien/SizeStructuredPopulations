@@ -10,9 +10,9 @@ include("./examples.jl")
 models = [M1(), M2(),M0()]
 init = vcat([0.0], [0.0, 0.0], zeros(3))
 dt = 0.1
-T_cell = 100.5
-T_lineage = 5000.0
-T_population = 8.5
+T_cell = 1000.5
+T_lineage = 7000.0
+T_population = 9.
 
 function terminate(cell)
     return cell.time[end] > T_population
